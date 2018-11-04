@@ -17,23 +17,25 @@ Some examples:
 
 ```kotlin
 //Let's grab a list of posts
-val posts: List<Post> = HttpClient.callSerializer(
+val posts: String = HttpClient.callString(
     url = "https://jsonplaceholder.typicode.com/posts",
-    method = HttpMethod.GET,
-    serializer = JSON,
-    strategy = Post.serializer().list
+    method = HttpMethod.GET
 )
 
 //Let's do a post!
-HttpClient.callSerializer(
+HttpClient.callString(
     url = "https://jsonplaceholder.typicode.com/posts",
     method = HttpMethod.POST,
-    body = HttpBody.serialize(Post.serializer(), Post(
-        title = "Arrogant Example Post",
-        body = "Your posts should aspire to be like this one."
-    )),
-    serializer = JSON,
-    strategy = Post.serializer()
+    body = HttpBody.string(
+        contentType = "application/json",
+        value = """{ "id":0, "userId":2, "title": "Test Title", "body": "Post's body" }"""
+    )
 )
 
 ```
+
+## KotlinX Serialization
+
+[Use this Gist](https://gist.github.com/UnknownJoe796/fca3322d1c568cc84f48359b5ab7a3be) to get extensions for using [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) with Kommunicate.
+
+Be warned that kotlinx.serialization currently has various issues with native and javascript.

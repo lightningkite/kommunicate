@@ -2,10 +2,6 @@ package com.lightningkite.kommunicate
 
 import kotlinx.io.core.ByteReadPacket
 
-/*
-This library should use kotlinx-io?
-*/
-
 expect object HttpClient {
     suspend fun callStringDetail(
         url: String,
