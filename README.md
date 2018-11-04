@@ -2,7 +2,7 @@
 
 By [Lightning Kite](https://lightningkite.com)
 
-A library combining [coroutines](https://github.com/Kotlin/kotlinx.coroutines), [serialization](https://github.com/Kotlin/kotlinx.serialization), and [io](https://github.com/Kotlin/kotlinx-io) so that you can make HTTP requests and use WebSockets!
+A library combining [coroutines](https://github.com/Kotlin/kotlinx.coroutines) and [io](https://github.com/Kotlin/kotlinx-io) so that you can make HTTP requests and use WebSockets!
 
 ## Discovery Guide
 
