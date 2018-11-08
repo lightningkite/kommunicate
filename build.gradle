@@ -71,3 +71,10 @@ kotlin {
         }
     }
 }
+tasks.withType(compileKotlinJs.getClass()) {
+    kotlinOptions {
+        moduleKind = "umd"
+        sourceMap = true
+        metaInfo = true
+    }
+}
