@@ -27,7 +27,9 @@ kotlin {
     targets {
         fromPreset(presets.jvm, 'jvm')
         fromPreset(presets.js, 'js')
-        fromPreset(presets.iosX64, 'ios')
+        if(org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
+            fromPreset(presets.iosX64, 'ios')
+        }
     }
     sourceSets {
         commonMain {
