@@ -107,12 +107,10 @@ actual object HttpClient {
 
     actual suspend fun socketString(
             url: String
-    ): HttpWebSocket<String, String> = suspendCoroutine { callback ->
-    }
+    ): HttpWebSocket<String, String> = TODO()
 
 
     actual suspend fun socketByteArray(
             url: String
-    ): HttpWebSocket<ByteArray, ByteArray> = suspendCoroutine { callback ->
-    }
+    ): HttpWebSocket<ByteArray, ByteArray> = TODO()
 }
