@@ -51,7 +51,12 @@ actual object HttpClient {
             method: HttpMethod,
             body: HttpBody,
             headers: Map<String, List<String>>
-    ) = TODO()
+    ): HttpResponse<ByteReadPacket> = call(
+            url = url,
+            method = method,
+            body = body,
+            headers = headers
+    ).copy { ByteReadPacket(it.toByteArray()) }
 
     suspend fun call(
             url: String,
@@ -62,46 +67,57 @@ actual object HttpClient {
 
         val urlObj = NSURL.URLWithString(url)!!
 
-        val data = when(body){
+        val sendData = when(body){
             HttpBody.EMPTY -> null
             is HttpBody.BString -> (body.value as NSString).dataUsingEncoding(NSUTF8StringEncoding)
             is HttpBody.BByteArray -> body.value.toNSData()
             is HttpBody.BInput -> TODO()
         }
 
-        val completionHandler = { data: NSData?, response:NSURLResponse?, error:NSError? ->
-            if(error != null){
-                callback.resumeWithException(ConnectionException(
-                        message = error.localizedDescription + "\n" + error.localizedFailureReason + "\n" + error.localizedRecoverySuggestion,
-                        cause = null
-                ))
-            } else if(response != null && data != null){
-                val casted = response as NSHTTPURLResponse
-                callback.resume(HttpResponse<NSData>(
-                        code = casted.statusCode.toInt(),
-                        headers = casted.allHeaderFields.entries.associate { it.key as String to listOf(it.value as String) },
-                        result = data
-                ))
-            } else {
-                callback.resumeWithException(ConnectionException(
-                        message = "No error or response",
-                        cause = null
-                ))
+        val delegate = object : NSObject(), NSURLSessionDataDelegateProtocol {
+            val data = NSMutableData()
+
+            override fun URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData: NSData) {
+                this.data.appendData(didReceiveData)
+            }
+
+            override fun URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError: NSError?) {
+                val response = task.response as? NSHTTPURLResponse
+                val error = didCompleteWithError
+
+                if(error != null){
+                    callback.resumeWithException(ConnectionException(
+                            message = error.localizedDescription + "\n" + error.localizedFailureReason + "\n" + error.localizedRecoverySuggestion,
+                            cause = null
+                    ))
+                } else if(response != null){
+                    val casted = response
+                    callback.resume(HttpResponse<NSData>(
+                            code = casted.statusCode.toInt(),
+                            headers = casted.allHeaderFields.entries.associate { it.key as String to listOf(it.value as String) },
+                            result = data
+                    ))
+                } else {
+                    callback.resumeWithException(ConnectionException(
+                            message = "No error or response",
+                            cause = null
+                    ))
+                }
             }
         }
 
-        if(data != null) {
-            val sessionConfig = NSURLSessionConfiguration.defaultSessionConfiguration
-            @Suppress("UNCHECKED_CAST")
-            sessionConfig.setHTTPAdditionalHeaders(headers.mapValues { it.value.joinToString(",") } as Map<Any?, *>)
-            val session = NSURLSession.sessionWithConfiguration(sessionConfig)
+        val sessionConfig = NSURLSessionConfiguration.defaultSessionConfiguration
+        @Suppress("UNCHECKED_CAST")
+        sessionConfig.setHTTPAdditionalHeaders(headers.mapValues { it.value.joinToString(",") } as Map<Any?, *>)
+        val session = NSURLSession.sessionWithConfiguration(sessionConfig, delegate = delegate, delegateQueue = NSOperationQueue.mainQueue)
 
-            val request = NSMutableURLRequest(uRL = urlObj, cachePolicy = NSURLRequestReloadIgnoringLocalCacheData, timeoutInterval = 15.0)
-            request.HTTPMethod = method.name.toUpperCase()
+        val request = NSMutableURLRequest(uRL = urlObj, cachePolicy = NSURLRequestReloadIgnoringLocalCacheData, timeoutInterval = 15.0)
+        request.HTTPMethod = method.name.toUpperCase()
 
-            session.uploadTaskWithRequest(request = request, fromData = data)
+        if(sendData != null) {
+            session.uploadTaskWithRequest(request = request, fromData = sendData).resume()
         } else {
-            NSURLSession.sharedSession.dataTaskWithURL(url = urlObj, completionHandler = completionHandler)
+            session.dataTaskWithURL(url = urlObj).resume()
         }
     }
 
