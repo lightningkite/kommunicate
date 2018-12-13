@@ -101,26 +101,28 @@ kotlin {
             }
         }
 
-        iosMain {
-            dependencies {
-                api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-native_debug_ios_arm64:1.0.1'
-                api 'org.jetbrains.kotlinx:kotlinx-io-native_debug_ios_arm64:0.1.1'
+        if (org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
+            iosMain {
+                dependencies {
+                    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-native_debug_ios_arm64:1.0.1'
+                    api 'org.jetbrains.kotlinx:kotlinx-io-native_debug_ios_arm64:0.1.1'
+                }
             }
-        }
-        iosTest {
-            dependencies {
+            iosTest {
+                dependencies {
+                }
             }
-        }
-        iosx64Main {
-            dependencies {
-                kotlin.srcDir('src/iosMain/kotlin')
-                api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-native_debug_ios_x64:1.0.1'
-                api 'org.jetbrains.kotlinx:kotlinx-io-native_debug_ios_x64:0.1.1'
+            iosx64Main {
+                dependencies {
+                    kotlin.srcDir('src/iosMain/kotlin')
+                    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-native_debug_ios_x64:1.0.1'
+                    api 'org.jetbrains.kotlinx:kotlinx-io-native_debug_ios_x64:0.1.1'
+                }
             }
-        }
-        iosx64Test {
-            dependencies {
-                kotlin.srcDir('src/iosTest/kotlin')
+            iosx64Test {
+                dependencies {
+                    kotlin.srcDir('src/iosTest/kotlin')
+                }
             }
         }
     }
