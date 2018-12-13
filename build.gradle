@@ -104,8 +104,8 @@ kotlin {
         iosMain {
             dependencies {
                 //group: 'org.jetbrains.kotlinx', name: 'kotlinx-io-native', version: '0.1.1', ext: 'pom'
-                api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.0.1'
-                api "org.jetbrains.kotlinx:kotlinx-io-native:0.1.1"
+                api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-native_debug_ios_arm64:1.0.1'
+                api "org.jetbrains.kotlinx:kotlinx-io-native_debug_ios_arm64:0.1.1"
             }
         }
         iosTest {
@@ -115,8 +115,8 @@ kotlin {
         iosx64Main {
             dependencies {
                 kotlin.srcDir('src/iosMain/kotlin')
-                api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.0.1'
-                api "org.jetbrains.kotlinx:kotlinx-io-native:0.1.1"
+                api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-native_debug_ios_x64:1.0.1'
+                api "org.jetbrains.kotlinx:kotlinx-io-native_debug_ios_x64:0.1.1"
             }
         }
         iosx64Test {
