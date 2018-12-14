@@ -1,8 +1,5 @@
 package com.lightningkite.kommunicate
 
-import kotlinx.io.core.ByteReadPacket
-import kotlinx.io.core.readBytes
-import kotlinx.io.streams.readPacketAtLeast
 import okhttp3.*
 import java.io.IOException
 import kotlin.coroutines.resume
@@ -22,9 +19,6 @@ actual object HttpClient {
             }
             is HttpBody.BString -> {
                 RequestBody.create(MediaType.parse(contentType), this.value)
-            }
-            is HttpBody.BInput -> {
-                RequestBody.create(MediaType.parse(contentType), this.value.readBytes())
             }
         }
     }
@@ -110,43 +104,6 @@ actual object HttpClient {
             override fun onResponse(call: Call, response: Response) {
                 resultThread.invoke {
                     callback.resume(response.toKotlin { body()!!.bytes() })
-                }
-            }
-
-        })
-    }
-
-    actual suspend fun callOutputDetail(
-        url: String,
-        method: HttpMethod,
-        body: HttpBody,
-        headers: Map<String, List<String>>
-    ): HttpResponse<ByteReadPacket> = suspendCoroutine { callback ->
-        val rq = Request.Builder()
-            .url(url)
-            .method(method.name, body.toOk(method))
-            .let {
-                for (header in headers) {
-                    for (entry in header.value) {
-                        it.header(header.key, entry)
-                    }
-                }
-                it
-            }
-            .build()
-        okClient.newCall(rq).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-                resultThread.invoke {
-                    callback.resumeWithException(ConnectionException(e.message ?: "", e))
-                }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                resultThread.invoke {
-                    callback.resume(response.toKotlin {
-                        body()!!.byteStream().readPacketAtLeast(Int.MAX_VALUE.toLong())
-                    })
                 }
             }
 

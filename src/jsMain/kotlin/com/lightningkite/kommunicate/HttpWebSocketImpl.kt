@@ -1,6 +1,5 @@
 package com.lightningkite.kommunicate
 
-import kotlinx.io.core.Closeable
 import org.w3c.dom.ARRAYBUFFER
 import org.w3c.dom.BinaryType
 import org.w3c.dom.CloseEvent
@@ -11,7 +10,7 @@ class HttpWebSocketImpl<T>(
     val write: WebSocket.(T) -> Unit,
     val read: (Any?) -> T,
     onReady: (Result<HttpWebSocketImpl<T>>) -> Unit
-) : HttpWebSocket<T, T>, Closeable {
+) : HttpWebSocket<T, T> {
     val onReady = run {
         var already = false
         label@{ it: Result<HttpWebSocketImpl<T>> ->

@@ -1,8 +1,6 @@
 package com.lightningkite.kommunicate
 
-import kotlinx.io.core.Closeable
-
-interface HttpWebSocket<OUTBOUND, INBOUND> : Closeable {
+interface HttpWebSocket<OUTBOUND, INBOUND> {
     var onMessage: (INBOUND) -> Unit
     var onDisconnect: (
         closureCode: Int?,
@@ -11,6 +9,6 @@ interface HttpWebSocket<OUTBOUND, INBOUND> : Closeable {
     ) -> Unit
 
     fun send(data: OUTBOUND)
-    override fun close() = close(1000, "Normal closure")
+    fun close() = close(1000, "Normal closure")
     fun close(code: Int, reason: String)
 }

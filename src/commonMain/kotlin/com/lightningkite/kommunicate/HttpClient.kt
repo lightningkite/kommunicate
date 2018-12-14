@@ -1,7 +1,5 @@
 package com.lightningkite.kommunicate
 
-import kotlinx.io.core.ByteReadPacket
-
 expect object HttpClient {
     suspend fun callStringDetail(
         url: String,
@@ -16,13 +14,6 @@ expect object HttpClient {
         body: HttpBody = HttpBody.EMPTY,
         headers: Map<String, List<String>> = mapOf()
     ): HttpResponse<ByteArray>
-
-    suspend fun callOutputDetail(
-        url: String,
-        method: HttpMethod,
-        body: HttpBody = HttpBody.EMPTY,
-        headers: Map<String, List<String>> = mapOf()
-    ): HttpResponse<ByteReadPacket>
 
     suspend fun socketString(
         url: String

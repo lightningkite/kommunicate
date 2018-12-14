@@ -1,8 +1,5 @@
 package com.lightningkite.kommunicate
 
-import kotlinx.io.core.ByteReadPacket
-import kotlinx.io.core.readBytes
-import kotlinx.io.js.responsePacket
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Int8Array
 import org.khronos.webgl.Uint8Array
@@ -52,7 +49,6 @@ actual object HttpClient {
             when (body) {
                 is HttpBody.BString -> body.value
                 is HttpBody.BByteArray -> body.value
-                is HttpBody.BInput -> body.value.readBytes()
             }
         )
     }
@@ -89,48 +85,9 @@ actual object HttpClient {
             when (body) {
                 is HttpBody.BString -> body.value
                 is HttpBody.BByteArray -> body.value
-                is HttpBody.BInput -> body.value.readBytes()
             }
         )
     }
-
-    actual suspend fun callOutputDetail(
-        url: String,
-        method: HttpMethod,
-        body: HttpBody,
-        headers: Map<String, List<String>>
-    ): HttpResponse<ByteReadPacket> = suspendCoroutine { callback ->
-        val request = XMLHttpRequest()
-        request.responseType = org.w3c.xhr.XMLHttpRequestResponseType.ARRAYBUFFER
-        request.addEventListener("load", callback = {
-            val result =
-                toHttpResponse(request, XMLHttpRequest::responseByteArrayString, XMLHttpRequest::responsePacket)
-            callback.resume(result)
-        })
-        request.addEventListener("error", callback = {
-            val result =
-                toHttpResponse(request, XMLHttpRequest::responseByteArrayString, XMLHttpRequest::responsePacket)
-            callback.resume(result)
-        })
-        for (headerGroup in headers) {
-            for (value in headerGroup.value) {
-                request.setRequestHeader(headerGroup.key, value)
-            }
-        }
-        try {
-            request.open(method.name, url)
-        } catch (e: Throwable) {
-            callback.resumeWithException(ConnectionException(e.message ?: "", e))
-        }
-        request.send(
-            when (body) {
-                is HttpBody.BString -> body.value
-                is HttpBody.BByteArray -> body.value
-                is HttpBody.BInput -> body.value.readBytes()
-            }
-        )
-    }
-
 
     inline fun <T> toHttpResponse(
         request: XMLHttpRequest,

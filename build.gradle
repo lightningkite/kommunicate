@@ -44,7 +44,6 @@ repositories {
 group 'com.lightningkite'
 version '0.0.2'
 
-
 kotlin {
     targets {
         fromPreset(presets.jvm, 'jvm')
@@ -60,8 +59,6 @@ kotlin {
                 api 'org.jetbrains.kotlin:kotlin-stdlib-common'
 
                 api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.0.1'
-                api 'org.jetbrains.kotlinx:kotlinx-coroutines-io:0.1.1'
-                api "org.jetbrains.kotlinx:kotlinx-io:0.1.1"
 
             }
         }
@@ -75,14 +72,13 @@ kotlin {
             dependencies {
                 api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 
-                api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1'
-                api "org.jetbrains.kotlinx:kotlinx-io-jvm:0.1.1"
 
                 api 'com.squareup.okhttp3:okhttp:3.11.0'
             }
         }
         jvmTest {
             dependencies {
+                api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1'
                 api 'org.jetbrains.kotlin:kotlin-test'
                 api 'org.jetbrains.kotlin:kotlin-test-junit'
             }
@@ -91,36 +87,33 @@ kotlin {
             dependencies {
                 api 'org.jetbrains.kotlin:kotlin-stdlib-js'
 
-                api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.0.1'
-                api "org.jetbrains.kotlinx:kotlinx-io-js:0.1.1"
             }
         }
         jsTest {
             dependencies {
                 api 'org.jetbrains.kotlin:kotlin-test-js'
+                api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.0.1'
             }
         }
 
         if (org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
             iosMain {
                 dependencies {
-                    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-native_debug_ios_arm64:1.0.1'
-                    api 'org.jetbrains.kotlinx:kotlinx-io-native_debug_ios_arm64:0.1.1'
                 }
             }
             iosTest {
                 dependencies {
+                    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.0.1'
                 }
             }
             iosx64Main {
                 dependencies {
                     kotlin.srcDir('src/iosMain/kotlin')
-                    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-native_debug_ios_x64:1.0.1'
-                    api 'org.jetbrains.kotlinx:kotlinx-io-native_debug_ios_x64:0.1.1'
                 }
             }
             iosx64Test {
                 dependencies {
+                    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.0.1'
                     kotlin.srcDir('src/iosTest/kotlin')
                 }
             }

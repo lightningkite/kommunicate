@@ -4,7 +4,6 @@ import kotlinx.cinterop.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-import kotlinx.io.core.ByteReadPacket
 import platform.Foundation.*
 import platform.darwin.NSObject
 
@@ -46,18 +45,6 @@ actual object HttpClient {
             headers = headers
     ).copy { it.toByteArray() }
 
-    actual suspend fun callOutputDetail(
-            url: String,
-            method: HttpMethod,
-            body: HttpBody,
-            headers: Map<String, List<String>>
-    ): HttpResponse<ByteReadPacket> = call(
-            url = url,
-            method = method,
-            body = body,
-            headers = headers
-    ).copy { ByteReadPacket(it.toByteArray()) }
-
     suspend fun call(
             url: String,
             method: HttpMethod,
@@ -71,7 +58,6 @@ actual object HttpClient {
             HttpBody.EMPTY -> null
             is HttpBody.BString -> (body.value as NSString).dataUsingEncoding(NSUTF8StringEncoding)
             is HttpBody.BByteArray -> body.value.toNSData()
-            is HttpBody.BInput -> TODO()
         }
 
         val delegate = object : NSObject(), NSURLSessionDataDelegateProtocol {
