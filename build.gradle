@@ -12,28 +12,6 @@ buildscript {
 }
 apply plugin: 'kotlin-multiplatform'
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    publish = true
-    pkg {
-        repo = project.group.toString()
-        name = project.name
-        userOrg = "lightningkite"
-        licenses = ["MIT"]
-        def github = "https://github.com/lightningkite/${project.name}"
-        vcsUrl = github
-        websiteUrl = github
-        issueTrackerUrl = github + "/issues"
-        version {
-            name = project.version
-            released = new Date()
-        }
-    }
-}
-
 
 repositories {
     jcenter()
